@@ -8,7 +8,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/dchest/captcha"
+	"github.com/mrezaei1367/captcha"
 	"io"
 	"log"
 	"os"
