@@ -5,7 +5,6 @@ package captcha
 import (
 	"fmt"
 	"time"
-	"context"
 
 	"github.com/go-redis/redis"
 )
@@ -55,24 +54,22 @@ func (s *redisStore) Set(id string, digits []byte) {
 	//}
 
 	id = fmt.Sprintf("%s.%s", s.prefixKey, id)
-	ctx := context.Background()
-	_, err := s.redisClient.Get(ctx,id).Result()
+	_, err := s.redisClient.Get(id).Result()
 	if err == redis.Nil {
-		s.redisClient.Set(ctx,id, digits, s.expiration)
+		s.redisClient.Set(id, digits, s.expiration)
 	}
 }
 
 func (s *redisStore) Get(id string, clear bool) (digits []byte) {
 	id = fmt.Sprintf("%s.%s", s.prefixKey, id)
-	ctx := context.Background()
-	val, err := s.redisClient.Get(ctx,id).Result()
+	val, err := s.redisClient.Get(id).Result()
 	if err == redis.Nil {
 		return digits
 	}
 	digits = []byte(val)
 	if clear {
 		if err != redis.Nil {
-			s.redisClient.Del(ctx,id)
+			s.redisClient.Del(id)
 		}
 	}
 	return digits
