@@ -59,7 +59,7 @@ const (
 	// by default store.
 	CollectNum = 100
 	// Expiration time of captchas used by default store.
-	Expiration = 10 * time.Minute
+	Expiration = 15 * time.Minute
 )
 
 var (
