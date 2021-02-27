@@ -1,7 +1,5 @@
 package captcha
 
-
-
 import (
 	"fmt"
 	"time"
@@ -54,7 +52,7 @@ func (s *redisStore) Set(id string, digits []byte) {
 	//}
 
 	id = fmt.Sprintf("%s.%s", s.prefixKey, id)
-	_, err := s.redisClient.Get(id).Result()
+	_, err = s.redisClient.Get(id).Result()
 	if err == redis.Nil {
 		s.redisClient.Set(id, digits, s.expiration)
 	}
