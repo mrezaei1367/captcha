@@ -1,17 +1,13 @@
-// Copyright 2011 Dmitry Chestnykh. All rights reserved.
-// Use of this source code is governed by a MIT-style
-// license that can be found in the LICENSE file.
-
-// example of HTTP server that uses the captcha package.
 package main
 
 import (
 	"fmt"
-	"captcha"
+	"github.com/go-redis/redis"
+	"html/template"
 	"io"
 	"log"
 	"net/http"
-	"text/template"
+	"captcha"
 )
 
 var formTemplate = template.Must(template.New("example").Parse(formTemplateSrc))
@@ -42,6 +38,14 @@ func processFormHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	// redis store
+	s, err := captcha.NewRedisStore(&redis.Options{Addr: "localhost:6379", DB: 0}, captcha.Expiration, captcha.DefaultMaxRedisKeys, captcha.DefaultRedisPrefixKey)
+	if err != nil {
+		panic(err.Error())
+	}
+	captcha.SetCustomStore(s)
+
+	// http
 	http.HandleFunc("/", showFormHandler)
 	http.HandleFunc("/process", processFormHandler)
 	http.Handle("/captcha/", captcha.Server(captcha.StdWidth, captcha.StdHeight))
@@ -63,7 +67,6 @@ function setSrcQuery(e, q) {
 	}
 	e.src = src + "?" + q
 }
-
 function playAudio() {
 	var le = document.getElementById("lang");
 	var lang = le.options[le.selectedIndex].value;
@@ -73,14 +76,12 @@ function playAudio() {
 	e.autoplay = 'true';
 	return false;
 }
-
 function changeLang() {
 	var e = document.getElementById('audio')
 	if (e.style.display == 'block') {
 		playAudio();
 	}
 }
-
 function reload() {
 	setSrcQuery(document.getElementById('image'), "reload=" + (new Date()).getTime());
 	setSrcQuery(document.getElementById('audio'), (new Date()).getTime());

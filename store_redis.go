@@ -50,12 +50,13 @@ func (s *redisStore) Set(id string, digits []byte) {
 	//if c > s.maxKeys {
 	//	panic(fmt.Errorf("to many keys > %v", s.maxKeys))
 	//}
-
 	id = fmt.Sprintf("%s.%s", s.prefixKey, id)
-	_, err := s.redisClient.Get(id).Result()
-	if err == redis.Nil {
-		s.redisClient.Set(id, digits, s.expiration)
-	}
+	//_, err := s.redisClient.Get(id).Result()
+	//if err == redis.Nil {
+	//	s.redisClient.Set(id, digits, s.expiration)
+	//}
+	s.redisClient.Set(id, digits, s.expiration)
+
 }
 
 func (s *redisStore) Get(id string, clear bool) (digits []byte) {
